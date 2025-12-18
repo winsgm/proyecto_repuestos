@@ -103,7 +103,7 @@ function validateContactForm(form) {
     // Validar teléfono (opcional)
     const telefono = form.querySelector('#telefono').value.trim();
     if (telefono && telefono.length < 10) {
-        showError('#telefono', 'El teléfono debe tener al menos 10 dígitos');
+        showError('#telefono', 'El teléfono debe tener al menos 8 dígitos');
         isValid = false;
     }
     
@@ -142,7 +142,7 @@ function setupRealTimeValidation() {
                     
                 case 'telefono':
                     if (this.value && this.value.length < 10) {
-                        showError('#' + this.id, 'Mínimo 10 dígitos');
+                        showError('#' + this.id, 'Mínimo 8 dígitos');
                     }
                     break;
                     
@@ -392,4 +392,5 @@ window.addEventListener('storage', function(e) {
     if (e.key === 'carrito') {
         actualizarContadorCarrito();
     }
+
 });

@@ -1,15 +1,13 @@
-// registro.js - VERSIÓN COMPLETA Y FUNCIONAL
+// registro.js - VERSIÓN CORREGIDA Y COMPLETA
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("=== FORMULARIO DE REGISTRO INICIANDO ===");
+    console.log("=== FORMULARIO DE REGISTRO INICIADO ===");
 
-    // ===================================================================
-    // 1. ELEMENTOS DEL DOM
-    // ===================================================================
+    // Elementos del DOM
     const registrationForm = document.getElementById('registrationForm');
     const successMessage = document.getElementById('successMessage');
     const submitBtn = document.getElementById('submitBtn');
     
-    // Campos del formulario
+    // Elementos de entrada
     const fullNameInput = document.getElementById('fullName');
     const emailInput = document.getElementById('email');
     const phoneInput = document.getElementById('phone');
@@ -22,8 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Elementos de contraseña
     const showPasswordBtn = document.getElementById('showPassword');
     const showConfirmPasswordBtn = document.getElementById('showConfirmPassword');
-    
-    // Barras de fortaleza
     const strengthBars = [
         document.getElementById('strengthBar1'),
         document.getElementById('strengthBar2'),
@@ -32,28 +28,23 @@ document.addEventListener('DOMContentLoaded', function () {
     ];
     const strengthText = document.getElementById('strengthText');
 
-    // Requisitos de contraseña
+    // Elementos de requisitos
     const reqLength = document.getElementById('reqLength');
     const reqUppercase = document.getElementById('reqUppercase');
     const reqLowercase = document.getElementById('reqLowercase');
     const reqNumber = document.getElementById('reqNumber');
     const reqSpecial = document.getElementById('reqSpecial');
 
-    console.log("Elementos encontrados:", {
-        formulario: !!registrationForm,
-        mensajeExito: !!successMessage,
-        botonSubmit: !!submitBtn
-    });
-
     // ===================================================================
-    // 2. INICIALIZACIÓN
+    // 1. INICIALIZACIÓN
     // ===================================================================
     
-    // Ocultar mensaje de éxito al inicio
+    console.log("Formulario encontrado:", !!registrationForm);
+    console.log("Mensaje de éxito encontrado:", !!successMessage);
+    
+    // Ocultar mensaje de éxito al inicio (por si acaso está visible)
     if (successMessage) {
         successMessage.style.display = 'none';
-    } else {
-        console.error("ERROR: No se encontró el elemento successMessage");
     }
     
     // Enfocar el primer campo
@@ -62,22 +53,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ===================================================================
-    // 3. EVENT LISTENERS BÁSICOS
+    // 2. EVENT LISTENERS
     // ===================================================================
     
-    // Mostrar/ocultar contraseña
-    if (showPasswordBtn && passwordInput) {
-        showPasswordBtn.addEventListener('click', function () {
-            togglePasswordVisibility(passwordInput, this);
-        });
-    }
-
-    if (showConfirmPasswordBtn && confirmPasswordInput) {
-        showConfirmPasswordBtn.addEventListener('click', function () {
-            togglePasswordVisibility(confirmPasswordInput, this);
-        });
-    }
-
     // Validación en tiempo real
     if (fullNameInput) fullNameInput.addEventListener('input', validateFullName);
     if (emailInput) emailInput.addEventListener('input', validateEmail);
@@ -85,22 +63,32 @@ document.addEventListener('DOMContentLoaded', function () {
     if (passwordInput) passwordInput.addEventListener('input', validatePassword);
     if (confirmPasswordInput) confirmPasswordInput.addEventListener('input', validateConfirmPassword);
 
-    // ENVÍO DEL FORMULARIO - ¡ESTO ES LO MÁS IMPORTANTE!
+    // Mostrar/ocultar contraseña
+    if (showPasswordBtn) {
+        showPasswordBtn.addEventListener('click', function () {
+            togglePasswordVisibility(passwordInput, this);
+        });
+    }
+
+    if (showConfirmPasswordBtn) {
+        showConfirmPasswordBtn.addEventListener('click', function () {
+            togglePasswordVisibility(confirmPasswordInput, this);
+        });
+    }
+
+    // Envío del formulario - ¡ESTO ES LO MÁS IMPORTANTE!
     if (registrationForm) {
         registrationForm.addEventListener('submit', handleRegistration);
-        console.log("✅ Event listener de submit CONFIGURADO");
+        console.log("Event listener de submit configurado");
     } else {
-        console.error("❌ ERROR CRÍTICO: No se encontró registrationForm");
-        alert("Error: No se puede cargar el formulario. Recarga la página.");
+        console.error("ERROR: No se encontró el formulario de registro");
     }
 
     // ===================================================================
-    // 4. FUNCIONES DE VALIDACIÓN
+    // 3. FUNCIONES DE VALIDACIÓN (MANTENER TUS FUNCIONES ORIGINALES)
     // ===================================================================
     
     function validateFullName() {
-        if (!fullNameInput) return false;
-        
         const name = fullNameInput.value.trim();
         const errorElement = document.getElementById('fullNameError');
 
@@ -119,8 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validateEmail() {
-        if (!emailInput) return false;
-        
         const email = emailInput.value.trim();
         const errorElement = document.getElementById('emailError');
 
@@ -140,8 +126,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validatePhone() {
-        if (!phoneInput) return false;
-        
         const phone = phoneInput.value.trim();
         const errorElement = document.getElementById('phoneError');
 
@@ -150,12 +134,12 @@ document.addEventListener('DOMContentLoaded', function () {
             return false;
         }
 
-        // Expresión regular mejorada
-        const phoneRegex = /^[+]?[0-9\s\-\(\)]{10,}$/;
+        // Expresión regular que acepta formatos internacionales
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
         const cleanPhone = phone.replace(/[\s\(\)\-]/g, '');
 
-        if (!phoneRegex.test(phone) || cleanPhone.length < 10) {
-            showError(errorElement, 'Ingresa un número de teléfono válido (mínimo 10 dígitos)');
+        if (!phoneRegex.test(cleanPhone)) {
+            showError(errorElement, 'Ingresa un número de teléfono válido');
             return false;
         }
 
@@ -164,8 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validatePassword() {
-        if (!passwordInput) return false;
-        
         const password = passwordInput.value;
         const errorElement = document.getElementById('passwordError');
 
@@ -176,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const hasNumber = /[0-9]/.test(password);
         const hasSpecial = /[!@#$%^&*]/.test(password);
 
-        // Actualizar indicadores visuales
+        // Actualizar indicadores visuales de requisitos
         updateRequirement(reqLength, hasLength);
         updateRequirement(reqUppercase, hasUppercase);
         updateRequirement(reqLowercase, hasLowercase);
@@ -209,8 +191,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function validateConfirmPassword() {
-        if (!confirmPasswordInput || !passwordInput) return false;
-        
         const password = passwordInput.value;
         const confirmPassword = confirmPasswordInput.value;
         const errorElement = document.getElementById('confirmPasswordError');
@@ -231,16 +211,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateRequirement(element, isValid) {
         if (element) {
-            const icon = element.querySelector('i');
-            if (icon) {
-                if (isValid) {
-                    element.classList.add('valid');
-                    icon.style.color = '#4CAF50';
-                    icon.className = 'fas fa-check-circle';
-                } else {
-                    element.classList.remove('valid');
-                    icon.style.color = '#8888aa';
-                    icon.className = 'fas fa-circle';
+            if (isValid) {
+                element.classList.add('valid');
+                if (element.querySelector('i')) {
+                    element.querySelector('i').style.color = '#4CAF50';
+                }
+            } else {
+                element.classList.remove('valid');
+                if (element.querySelector('i')) {
+                    element.querySelector('i').style.color = '#8888aa';
                 }
             }
         }
@@ -250,19 +229,38 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!strengthBars[0]) return;
         
         // Resetear todas las barras
-        strengthBars.forEach(bar => {
+        strengthBars.forEach((bar, index) => {
             if (bar) bar.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
         });
 
         // Colores según la fortaleza
-        let color, text;
+        let color;
+        let text;
+
         switch (strength) {
-            case 1: color = '#ff6b6b'; text = 'Muy débil'; break;
-            case 2: color = '#ffa726'; text = 'Débil'; break;
-            case 3: color = '#ffd54f'; text = 'Regular'; break;
-            case 4: color = '#4CAF50'; text = 'Buena'; break;
-            case 5: color = '#2E7D32'; text = 'Excelente'; break;
-            default: color = '#8888aa'; text = 'Muy débil';
+            case 1:
+                color = '#ff6b6b';
+                text = 'Muy débil';
+                break;
+            case 2:
+                color = '#ffa726';
+                text = 'Débil';
+                break;
+            case 3:
+                color = '#ffd54f';
+                text = 'Regular';
+                break;
+            case 4:
+                color = '#4CAF50';
+                text = 'Buena';
+                break;
+            case 5:
+                color = '#2E7D32';
+                text = 'Excelente';
+                break;
+            default:
+                color = '#8888aa';
+                text = 'Seguridad: Muy débil';
         }
 
         // Activar barras según fortaleza
@@ -310,20 +308,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ===================================================================
-    // 5. FUNCIÓN PRINCIPAL DE REGISTRO - ¡CORREGIDA Y FUNCIONAL!
+    // 4. FUNCIÓN PRINCIPAL DE REGISTRO - ¡CORREGIDA!
     // ===================================================================
     
     async function handleRegistration(e) {
-        console.log("⏳ Iniciando proceso de registro...");
-        e.preventDefault(); // ¡IMPORTANTE!
+        e.preventDefault();
+        console.log("Formulario enviado - Iniciando registro...");
 
         // 1. Validar todo el formulario
         if (!validateAll()) {
-            console.log("❌ Validación fallida");
+            console.log("Validación fallida");
             return;
         }
 
-        console.log("✅ Validación exitosa");
+        console.log("Validación exitosa - Creando usuario...");
 
         // 2. Mostrar estado de carga
         const originalText = submitBtn.innerHTML;
@@ -331,118 +329,80 @@ document.addEventListener('DOMContentLoaded', function () {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
 
         // 3. Pequeña pausa para feedback visual
-        await new Promise(resolve => setTimeout(resolve, 800));
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
-        try {
-            // 4. Crear objeto de usuario
-            const user = {
-                id: 'user_' + Date.now(),
-                name: fullNameInput.value.trim(),
-                email: emailInput.value.trim().toLowerCase(),
-                phone: phoneInput.value.trim(),
-                address: addressInput.value.trim(),
-                password: passwordInput.value,
-                createdAt: new Date().toISOString(),
-                newsletter: newsletterCheckbox ? newsletterCheckbox.checked : false,
-                role: 'customer',
-                lastLogin: null
-            };
+        // 4. Crear objeto de usuario
+        const user = {
+            id: 'user_' + Date.now(),
+            name: fullNameInput.value.trim(),
+            email: emailInput.value.trim().toLowerCase(),
+            phone: phoneInput.value.trim(),
+            address: addressInput.value.trim(),
+            password: passwordInput.value, // En una app real, esto debería estar encriptado
+            createdAt: new Date().toISOString(),
+            newsletter: newsletterCheckbox.checked,
+            role: 'customer',
+            lastLogin: null,
+            loggedIn: true // IMPORTANTE: Marcamos como logueado automáticamente
+        };
 
-            console.log("📝 Usuario creado:", { 
-                name: user.name, 
-                email: user.email,
-                phone: user.phone 
-            });
+        console.log("Usuario creado:", { ...user, password: '***' });
 
-            // 5. VERIFICAR SI EL EMAIL YA EXISTE
-            const existingUsers = JSON.parse(localStorage.getItem('allUsers')) || [];
-            const emailExists = existingUsers.some(u => u.email.toLowerCase() === user.email.toLowerCase());
+        // 5. VERIFICAR SI EL EMAIL YA EXISTE
+        const existingUsers = JSON.parse(localStorage.getItem('allUsers')) || [];
+        const emailExists = existingUsers.some(u => u.email.toLowerCase() === user.email.toLowerCase());
 
-            if (emailExists) {
-                console.log("❌ Email ya registrado");
-                
-                // Restaurar botón
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-
-                // Mostrar error
-                showError(document.getElementById('emailError'), 'Este email ya está registrado');
-                if (emailInput) emailInput.focus();
-                return;
-            }
-
-            // 6. GUARDAR USUARIO EN EL SISTEMA
-            console.log("💾 Guardando usuario...");
-            
-            // 6.1 Guardar en lista de usuarios
-            existingUsers.push(user);
-            localStorage.setItem('allUsers', JSON.stringify(existingUsers));
-            
-            // 6.2 Guardar usuario actual (formato que usa tu navbar)
-            const userForNavbar = {
-                name: user.name,
-                email: user.email,
-                loggedIn: true,
-                timestamp: new Date().toISOString()
-            };
-            localStorage.setItem('user', JSON.stringify(userForNavbar));
-            
-            // 6.3 Para compatibilidad futura
-            localStorage.setItem('currentUser', JSON.stringify(user));
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            // 6.4 Marcar como nuevo usuario
-            localStorage.setItem('isNewUser', 'true');
-
-            console.log('✅ Usuario registrado y guardado exitosamente');
-
-            // 7. VERIFICAR PARÁMETROS DE URL PARA REDIRECCIÓN
-            const urlParams = new URLSearchParams(window.location.search);
-            const fromCarritoModal = urlParams.get('fromCarritoModal') === 'true';
-            const hasPendingPurchase = urlParams.get('pendingPurchase') === 'true';
-            const redirectTo = urlParams.get('redirect') || 'index.html';
-            
-            let destination = redirectTo;
-            let customMessage = '¡Cuenta creada exitosamente! Ya puedes iniciar sesión.';
-            
-            // 8. DECIDIR A DÓNDE REDIRIGIR
-            if (fromCarritoModal || hasPendingPurchase) {
-                destination = 'carrito.html?openModal=true';
-                customMessage = '¡Cuenta creada! Redirigiendo a tu compra...';
-                console.log("🛒 Redirigiendo al carrito (viene del modal)");
-            } else {
-                console.log("🏠 Redirigiendo a página principal");
-            }
-
-            // 9. MOSTRAR MENSAJE DE ÉXITO
-            console.log("🎉 Mostrando mensaje de éxito...");
-            showSuccessMessage(user, customMessage);
-
-            // 10. REDIRIGIR DESPUÉS DE 2 SEGUNDOS
-            setTimeout(() => {
-                console.log("➡️ Redirigiendo a:", destination);
-                window.location.href = destination;
-            }, 2000);
-
-        } catch (error) {
-            console.error("❌ Error en el registro:", error);
+        if (emailExists) {
+            console.log("Email ya registrado");
             
             // Restaurar botón
             submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-            
-            // Mostrar error al usuario
-            alert("Hubo un error al crear la cuenta. Por favor, intenta nuevamente.");
+            submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
+
+            // Mostrar error
+            showError(document.getElementById('emailError'), 'Este email ya está registrado');
+            emailInput.focus();
+            return;
         }
+
+        // 6. GUARDAR USUARIO EN EL SISTEMA
+        console.log("Guardando usuario en localStorage...");
+        
+        // 6.1 Guardar en lista de usuarios
+        existingUsers.push(user);
+        localStorage.setItem('allUsers', JSON.stringify(existingUsers));
+        
+        // 6.2 Guardar usuario actual (formato que usa tu navbar)
+        const userForNavbar = {
+            name: user.name,
+            email: user.email,
+            loggedIn: true,
+            timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('user', JSON.stringify(userForNavbar));
+        
+        // 6.3 Para compatibilidad futura
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        localStorage.setItem('isLoggedIn', 'true');
+        
+        // 6.4 Marcar como nuevo usuario
+        localStorage.setItem('isNewUser', 'true');
+
+        console.log('Usuario registrado y guardado exitosamente');
+
+        // 7. MOSTRAR MENSAJE DE ÉXITO - ¡ESTO ES LO QUE TE FALTABA!
+        console.log("Mostrando mensaje de éxito...");
+        showSuccessMessage(user);
+
+        // 8. NO redirigir automáticamente - dejar que el usuario haga clic en "Iniciar Sesión"
+        console.log("Registro completado - Esperando acción del usuario");
     }
 
     // ===================================================================
-    // 6. FUNCIONES AUXILIARES
+    // 5. FUNCIONES AUXILIARES
     // ===================================================================
     
     function validateAll() {
-        console.log("🔍 Validando todo el formulario...");
-        
         const validations = [
             validateFullName(),
             validateEmail(),
@@ -452,97 +412,66 @@ document.addEventListener('DOMContentLoaded', function () {
         ];
 
         // Validar términos
-        if (termsCheckbox && !termsCheckbox.checked) {
+        if (!termsCheckbox.checked) {
             alert('Debes aceptar los términos y condiciones para continuar');
-            if (termsCheckbox) termsCheckbox.focus();
+            termsCheckbox.focus();
             return false;
         }
 
-        const allValid = validations.every(v => v === true);
-        console.log("✅ Todas las validaciones:", allValid ? "PASÓ" : "FALLÓ");
-        
-        return allValid;
+        return validations.every(v => v === true);
     }
 
-    function showSuccessMessage(user, customMessage = null) {
-        console.log("📨 Mostrando mensaje de éxito...");
+    function showSuccessMessage(user) {
+        console.log("Función showSuccessMessage ejecutada");
         
         // 1. Actualizar datos en el mensaje de éxito
         const registeredName = document.getElementById('registeredName');
         const registeredEmail = document.getElementById('registeredEmail');
         
-        if (registeredName) {
-            registeredName.textContent = user.name;
-            console.log("✅ Nombre actualizado:", user.name);
-        }
+        if (registeredName) registeredName.textContent = user.name;
+        if (registeredEmail) registeredEmail.textContent = user.email;
         
-        if (registeredEmail) {
-            registeredEmail.textContent = user.email;
-            console.log("✅ Email actualizado:", user.email);
-        }
-        
-        // 2. Actualizar mensaje personalizado si existe
-        if (customMessage) {
-            const successText = successMessage.querySelector('p');
-            if (successText) {
-                successText.textContent = customMessage;
-            }
-        }
-        
-        // 3. Ocultar formulario
+        // 2. Ocultar formulario
         if (registrationForm) {
             registrationForm.style.display = 'none';
-            console.log("✅ Formulario ocultado");
+            console.log("Formulario ocultado");
         }
         
-        // 4. Mostrar mensaje de éxito
+        // 3. Mostrar mensaje de éxito
         if (successMessage) {
             successMessage.style.display = 'block';
-            successMessage.style.opacity = '0';
-            
-            // Animación de fade in
-            setTimeout(() => {
-                successMessage.style.transition = 'opacity 0.5s ease';
-                successMessage.style.opacity = '1';
-            }, 10);
-            
-            console.log("✅ Mensaje de éxito mostrado");
+            successMessage.style.animation = 'fadeIn 0.5s ease';
+            console.log("Mensaje de éxito mostrado");
         } else {
-            console.error("❌ ERROR: No se pudo mostrar el mensaje de éxito");
+            console.error("ERROR: Elemento successMessage no encontrado");
         }
         
-        // 5. Restaurar botón (por si acaso)
+        // 4. Restaurar botón
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> Crear cuenta';
         }
         
-        // 6. Hacer scroll al mensaje de éxito
+        // 5. Hacer scroll al mensaje de éxito
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
         
-        // 7. Disparar evento de autenticación
-        window.dispatchEvent(new CustomEvent('authStateChanged'));
-        
-        console.log("🎉 Proceso de registro completado con éxito!");
+        // 6. Disparar evento de autenticación para actualizar navbar si está en otra pestaña
+        window.dispatchEvent(new Event('authStateChanged'));
     }
 
     // ===================================================================
-    // 7. FUNCIONES GLOBALES
+    // 6. FUNCIONES GLOBALES
     // ===================================================================
     
     // Función para resetear formulario (se llama desde el HTML)
     window.resetForm = function () {
-        console.log("🔄 Reseteando formulario...");
+        console.log("Reseteando formulario...");
 
         // 1. Mostrar formulario y ocultar mensaje de éxito
-        if (successMessage) {
-            successMessage.style.display = 'none';
-            successMessage.style.opacity = '0';
-        }
-        
+        if (successMessage) successMessage.style.display = 'none';
         if (registrationForm) {
             registrationForm.style.display = 'block';
             registrationForm.reset();
@@ -572,10 +501,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (el) {
                 el.classList.remove('valid');
                 const icon = el.querySelector('i');
-                if (icon) {
-                    icon.style.color = '#8888aa';
-                    icon.className = 'fas fa-circle';
-                }
+                if (icon) icon.style.color = '#8888aa';
             }
         });
 
@@ -586,11 +512,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // 6. Enfocar primer campo
-        if (fullNameInput) {
-            fullNameInput.focus();
-        }
+        if (fullNameInput) fullNameInput.focus();
         
-        console.log("✅ Formulario reseteado exitosamente");
+        console.log("Formulario reseteado exitosamente");
     };
 
     // Función para depuración
@@ -604,36 +528,5 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("======================");
     };
 
-    // ===================================================================
-    // 8. VERIFICACIÓN INICIAL
-    // ===================================================================
-    
-    // Verificar si ya hay sesión activa
-    function checkExistingSession() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-        if (isLoggedIn && currentUser && window.location.pathname.includes('registro.html')) {
-            console.log("⚠️ Usuario ya logueado en página de registro");
-            
-            // Verificar parámetros para redirigir
-            const urlParams = new URLSearchParams(window.location.search);
-            const fromCarritoModal = urlParams.get('fromCarritoModal') === 'true';
-            
-            let destination = 'index.html';
-            if (fromCarritoModal) {
-                destination = 'carrito.html?openModal=true';
-            }
-            
-            setTimeout(() => {
-                console.log("➡️ Redirigiendo usuario ya logueado a:", destination);
-                window.location.href = destination;
-            }, 1000);
-        }
-    }
-
-    // Ejecutar verificación
-    checkExistingSession();
-
-    console.log("=== FORMULARIO DE REGISTRO LISTO ===");
+    console.log("=== FORMULARIO DE REGISTRO CONFIGURADO CORRECTAMENTE ===");
 });
